@@ -5,25 +5,7 @@ import { useEffect } from "react";
 import { redirect } from "next/navigation";
 
 
-// const users = [
-//   { id: 1, name: "Rahul", lastMessage: "Hey bro!", time: "10:30 AM" },
-//   { id: 2, name: "Amit", lastMessage: "Let's meet", time: "9:45 AM" },
-//   { id: 3, name: "Priya", lastMessage: "Good night 😊", time: "Yesterday" },
-// ];
 
-// const messagesData = {
-//   1: [
-//     { sender: "me", text: "Hello Rahul!" },
-//     { sender: "other", text: "Hey bro!" },
-//   ],
-//   2: [
-//     { sender: "other", text: "Let's meet" },
-//     { sender: "me", text: "Sure 👍" },
-//   ],
-//   3: [
-//     { sender: "other", text: "Good night 😊" },
-//   ],
-// };
 
 export default function LandingPage() {
   const { data: session } = useSession();
@@ -42,12 +24,7 @@ export default function LandingPage() {
         {/* Navbar */}
         <nav className="flex justify-between items-center px-8 py-4">
           <h1 className="text-2xl font-bold">ChatApp</h1>
-          <button
-            onClick={() => signIn()}
-            className="bg-white text-indigo-600 px-4 py-2 rounded-lg font-medium hover:bg-gray-100"
-          >
-            Login
-          </button>
+          
         </nav>
 
         {/* Hero Section */}
@@ -63,7 +40,7 @@ export default function LandingPage() {
 
           <button
             onClick={() => signIn()}
-            className="mt-8 bg-white text-indigo-600 px-6 py-3 rounded-xl font-semibold hover:bg-gray-100"
+            className="mt-8 bg-white text-indigo-600 px-6 py-3 rounded-xl font-semibold hover:bg-gray-100 cursor-pointer"
           >
             Get Started with Google
           </button>

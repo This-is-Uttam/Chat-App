@@ -7,6 +7,19 @@ import Image from "next/image";
 import { TUser } from "@/lib/models/User";
 import socket from "@/lib/socket";
 import { formatDate, formatTime } from "@/utils/helper";
+import { BiSend } from "react-icons/bi";
+import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export type Message = {
   sender: string;
@@ -22,7 +35,8 @@ export default function ChatPage() {
   const [isLoading, setisLoading] = useState(true);
   const [currentRoomId, setCurrentRoomId] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
-  const [lastMsgs, setLastMsgs] = useState<string[]>([])
+  const [lastMsgs, setLastMsgs] = useState<string[]>([]);
+  const [onlineUsers, setOnlineUsers] = useState<string[]>([])
 
   const { data: session } = useSession();
 
@@ -58,7 +72,6 @@ export default function ChatPage() {
 
       const resJson = await response.json();
 
-      console.log("Fetched users:", resJson);
       if (resJson.success) {
         // otherUsers = users without me
         const users: TUser[] = resJson.data;
@@ -66,7 +79,7 @@ export default function ChatPage() {
 
         // last messages list
         const lastMsgs: string[] = resJson.lastMsgs;
-        setLastMsgs(lastMsgs || null) 
+        setLastMsgs(lastMsgs || null);
       } else {
         console.error("Failed to fetch users:", resJson.message);
       }
@@ -86,7 +99,6 @@ export default function ChatPage() {
   };
 
   const handleUserSelect = (user: TUser) => {
-    console.log("UUUUUUUU", user);
     setSelectedUser(user);
     const roomId = getRoomId(user.email);
 
@@ -135,6 +147,7 @@ export default function ChatPage() {
     }
 
     getOtherUsers();
+
   }, []);
 
   // register user to socket server
@@ -175,6 +188,26 @@ export default function ChatPage() {
     });
   }, [session?.user?.email, currentRoomId]);
 
+  // For online signal
+  useEffect(() => {
+    if(!session?.user?.email) return;
+    console.log("session changed")
+    // user online broadcast
+    socket.emit("user_online", session?.user?.email);
+
+    // get online users
+    socket.on("online_users", (onlineUsers)=> {
+
+      setOnlineUsers(onlineUsers)
+      console.log("online users: ", onlineUsers)
+    })
+
+    return ()=>{socket.off("online_users")}
+  
+    
+  }, [session])
+  
+
   // load messages in the room
   useEffect(() => {
     if (!currentRoomId) return;
@@ -207,13 +240,17 @@ export default function ChatPage() {
                 }`}
               >
                 <div className="flex gap-2">
+                  <div className="relative">
+                    {/* online symbol */}
+                   {onlineUsers.includes(user?.email) && <div className="w-3 h-3 bg-green-500 rounded-full absolute bottom-1 right-0 border-green-300 border-2"></div>}
                   <Image
                     src={user.image || "/placeholder.jpg"}
                     alt={selectedUser?.name || "User avatar"}
-                    width={40}
-                    height={40}
-                    className="h-full rounded-full"
+                    width={1080}
+                    height={1080}
+                    className=" w-10 h-auto rounded-full object-cover"
                   />
+                  </div>
                   <div>
                     <div className="font-semibold">{user.name}</div>
                     <p className="text-sm text-gray-500 truncate">
@@ -225,21 +262,48 @@ export default function ChatPage() {
             ))
           )}
         </div>
-        <div className="flex">
-          <h2 className="p-4 font-bold text-[12px] border-t">
-            Logged in as: {session?.user?.email}
-          </h2>
-          <button
-            onClick={() => signOut()}
-            className="w-10/12 text-sm bg-blue-500 text-white font-semibold hover:bg-blue-600"
-          >
-            Sign Out
-          </button>
+        <div className="flex border-t border-gray-400 flex items-center justify-between p-2">
+          <div className="flex">
+            <Image
+              src={session?.user?.image || "/placeholder.jpg"}
+              alt={selectedUser?.name || "User avatar"}
+              width={500}
+              height={500}
+              className="w-[30px] h-fit rounded-lg"
+            />
+
+            <div className="p-2 font-semibold text-gray-800 text-[12px] truncate">
+              {session?.user?.email}
+            </div>
+          </div>
+
+          {/* <Button onClick={() => signOut()}>Logout</Button> */}
+
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant={"destructive"}>Logout</Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you sure to Logout?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  You can login again with the same Google Account whenever you
+                  want.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={() => signOut()}>
+                  Continue
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
 
-      {/* RIGHT - Chat Area */}
-      <div className="w-full flex flex-col">
+      {/*  Chat Area */}
+      <div className="w-full flex flex-col  bg-gradient-to-br from-indigo-400 to-purple-400  ">
         {/* Header */}
         {selectedUser && (
           <div className=" px-4 py-2.5 flex items-center gap-2 bg-white border-b border-gray-300 font-semibold">
@@ -250,18 +314,22 @@ export default function ChatPage() {
                 alt={selectedUser?.name || "User avatar"}
                 width={40}
                 height={40}
-                className="h-full rounded-full"
+                className="h-full w-auto rounded-full"
               />
             </div>
-            {/* Name */}
+            {/* Name and last seen */}
+            <div>
+
             <div>{selectedUser && selectedUser.name}</div>
+            <div className="text-sm text-gray-700">{onlineUsers.includes(selectedUser.email)? "Online":"Offline"}</div>
+            </div>
           </div>
         )}
 
         {/* Messages */}
-        <div className="flex-1 px-3 bg-(--chat-bg) overflow-y-auto space-y-1 ">
+        <div className="flex-1 px-3 overflow-y-auto space-y-1 ">
           {messages.length === 0 ? (
-            <div className="h-[90vh] text-gray-500 flex justify-center items-center text-center">
+            <div className="h-[90vh] text-gray-700 flex justify-center items-center text-center">
               No messages yet. <br /> Click a user to start the conversation!
             </div>
           ) : (
@@ -273,13 +341,13 @@ export default function ChatPage() {
                     key={index}
                     className={`max-w-[70%] w-fit px-3 my-1 rounded-lg flex gap-3 justify-between ${
                       msg.sender === session?.user?.email
-                        ? "ml-auto bg-(--primary) text-white"
+                        ? "ml-auto bg-[#3f0497] text-white"
                         : "bg-white"
                     }`}
                   >
                     <div className="py-1">{msg.message}</div>
                     <div
-                      className={`text-xs text-right flex items-end pb-1
+                      className={` text-xs shrink-0 text-right flex items-end pb-1
                    mt-1 ${msg.sender === session?.user?.email ? "text-blue-200" : "text-gray-500"}`}
                     >
                       {formatTime(msg.createdAt)}
@@ -293,22 +361,24 @@ export default function ChatPage() {
         </div>
 
         {/* Input */}
-        <div className="p-4 flex gap-2">
-          <input
-            value={input}
-            onKeyDown={(e) => handleKeyDown(e)}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Type a message..."
-            className="flex-1 border rounded-lg px-3 py-2 outline-none"
-          />
+        {selectedUser && (
+          <div className="bg-white rounded-full mx-3 mb-3 flex gap-2">
+            <input
+              value={input}
+              onKeyDown={(e) => handleKeyDown(e)}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Type a message..."
+              className="flex-1 py-3 rounded-lg px-5 py-2 outline-none"
+            />
 
-          <button
-            onClick={() => sendMessage(input)}
-            className="bg-blue-500 text-white px-4 rounded-lg"
-          >
-            Send
-          </button>
-        </div>
+            <div
+              onClick={() => sendMessage(input)}
+              className={`${input.trim() == "" ? "bg-[#e3d1ff]" : "bg-[#6905ff]"} text-white p-3 m-1 rounded-full`}
+            >
+              <BiSend size={22} />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
