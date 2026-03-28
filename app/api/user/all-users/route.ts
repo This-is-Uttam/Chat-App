@@ -1,11 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { connectDB } from "@/lib/db";
-import { User } from "@/lib/models/User";
+import { TUser, User } from "@/lib/models/User";
+import Chat from "@/lib/models/Chat";
 
-export async function GET(req: NextRequest) {
+export type Message = {
+  sender: string;
+  message: string;
+  createdAt: Date;
+};
+
+export type ChatType = {
+  roomId: string;
+  participants: string[];
+  messages: Message[];
+};
+
+export async function POST(req: NextRequest) {
   try {
     const session = getServerSession()
+    const {currentUserEmail: currentUser} = await req.json()
     
 
     if (!session) {
@@ -17,9 +31,22 @@ export async function GET(req: NextRequest) {
 
     connectDB();
 
-    const users = await User.find();
+    const users: TUser[] = await User.find({email: {$ne: currentUser}});
 
-    return NextResponse.json({ success: true, data: users });
+    const lastMsgs = await Promise.all(users.map(async (user)=> {
+        const roomId = [user.email, currentUser].sort().join("_")
+
+        
+        const chat: ChatType | null = await Chat.findOne({roomId});
+        if (chat) {
+          // console.log("chat route: ", chat.messages[chat.messages.length - 1].message)
+          return chat.messages[chat.messages.length - 1].message
+        }
+    }))
+
+    // console.log("last msg: ", lastMsgs)
+
+    return NextResponse.json({ success: true, data: users, lastMsgs});
   } catch (error) {
     return NextResponse.json(
       { success: false, message: "Unauthorized" },
