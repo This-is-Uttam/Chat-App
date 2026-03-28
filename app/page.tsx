@@ -41,7 +41,7 @@ export default function ChatPage() {
   const { data: session } = useSession();
 
   const sendMessage = (message: string) => {
-    if (!input.trim()) return;
+    if (!input.trim() || !selectedUser) return;
 
     const roomId = getRoomId(selectedUser.email);
     const createdAt = Date.now();
