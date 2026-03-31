@@ -8,6 +8,7 @@ const Chat = require("./models/Chat")
 
 
 const httpServer = createServer();
+const PORT = process.env.PORT || 4000;
 
 const io = new Server(httpServer, {
     cors: {
@@ -99,8 +100,8 @@ let onlineUsers = new Map();
     });
 
 
-    httpServer.listen(4000, () => {
-        console.log("Server running on port 4000");
+    httpServer.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
     });
 
 })();
