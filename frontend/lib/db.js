@@ -24,7 +24,7 @@ async function connectDB() {
     cached.promise = mongoose
       .connect(MONGODB_URI, { bufferCommands: false })
       .then((mongoose) => {
-        console.log("MongoDB connected (Socket Server) ✅");
+        console.log("MongoDB connected (Socket Server)");
         return mongoose;
       });
   }
