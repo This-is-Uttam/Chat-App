@@ -3,7 +3,7 @@ require("dotenv").config();
 const { createServer, request } = require("http");
 const { Server } = require("socket.io");
 const { connectDB } = require("./db")
-const Chat = require("../frontend/lib/models/Chat")
+const Chat = require("./models/Chat")
 
 
 
