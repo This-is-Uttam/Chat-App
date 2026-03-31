@@ -1,11 +1,16 @@
 require("dotenv").config();
 
+const express = require("express");
 const { createServer, request } = require("http");
 const { Server } = require("socket.io");
 const { connectDB } = require("./db")
 const Chat = require("./models/Chat")
 
+const app = express();
 
+app.get("/", (req, res) => {
+  res.send("Socket server is running...");
+});
 
 const httpServer = createServer();
 const PORT = process.env.PORT || 4000;
