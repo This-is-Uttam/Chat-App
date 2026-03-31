@@ -2,8 +2,8 @@ require("dotenv").config();
 
 const { createServer, request } = require("http");
 const { Server } = require("socket.io");
-const { connectDB } = require("./lib/db")
-const Chat = require("./lib/models/Chat")
+const { connectDB } = require("../frontend/lib/db")
+const Chat = require("../frontend/lib/models/Chat")
 
 
 
