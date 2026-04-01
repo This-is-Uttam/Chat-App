@@ -12,7 +12,7 @@ app.get("/", (req, res) => {
   res.send("Socket server is running...");
 });
 
-const httpServer = createServer();
+const httpServer = createServer(app);
 const PORT = process.env.PORT || 4000;
 
 const io = new Server(httpServer, {
@@ -105,7 +105,7 @@ let onlineUsers = new Map();
     });
 
 
-    httpServer.listen(PORT, () => {
+    httpServer.listen(PORT,"0.0.0.0", () => {
         console.log(`Server running on port ${PORT}`);
     });
 
