@@ -218,7 +218,7 @@ export default function ChatPage() {
   return (
     <div className="h-screen flex bg-gray-100">
       {/* Chat List */}
-      <div className="w-[40%]  max-w-[450px] min-w-[250px] bg-white border-r border-gray-400 flex flex-col justify-between">
+      <div className="w-full sm:w-[40%]  bg-white border-r border-gray-400 flex flex-col justify-between">
         <div>
           <div className="p-4 font-bold text-xl border-gray-400 text-blue-600">
             Chat App
@@ -303,7 +303,7 @@ export default function ChatPage() {
       </div>
 
       {/*  Chat Area */}
-      <div className="w-full flex flex-col  bg-gradient-to-br from-indigo-400 to-purple-400  ">
+      <div className="hidden sm:w-[60%] sm:flex lg:w-full flex-col  bg-gradient-to-br from-indigo-400 to-purple-400  ">
         {/* Header */}
         {selectedUser && (
           <div className=" px-4 py-2.5 flex items-center gap-2 bg-white border-b border-gray-300 font-semibold">
