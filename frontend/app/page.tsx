@@ -51,7 +51,7 @@ export default function ChatPage() {
   const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
 
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
 
   const sendMessage = (message: string) => {
     if (!input.trim() || !selectedUser) return;
@@ -156,11 +156,13 @@ export default function ChatPage() {
   }, [messages]);
 
   useEffect(() => {
+     if (status === "loading") return;
+
     if (!session) {
       // Redirect to login if not authenticated
       redirect("/login");
     }
-  }, []);
+  }, [session, status]);
 
   // register user to socket server
   useEffect(() => {
