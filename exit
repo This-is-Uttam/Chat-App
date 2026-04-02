@@ -1,0 +1,13 @@
+[33m7f753e1[m[33m ([m[1;36mHEAD[m[33m, [m[1;32morigin[m[33m)[m fix express server and port
+[33m0393ad6[m added a base route with express
+[33mcdc684b[m update port to dynamic
+[33m5bb69b6[m copied Chat.js model in server
+[33m2b7d650[m install mongoose
+[33m3bac766[m fix require path
+[33m6565f8c[m added db.ts file in server
+[33mdf7767d[m changes in the folder structure
+[33m56ef5ac[m fix bugs
+[33mbbd9794[m next_auth callback bugs fixed
+[33m00f832c[m almost UI complete with online status
+[33mb6c0fb1[m last message and few UI design
+[33ma99f29f[m First commit, having 1-to-1 conversation done
