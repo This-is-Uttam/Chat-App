@@ -257,7 +257,10 @@ export default function ChatPage() {
                 {/* All Chats */}
                 <div>
                   {isChatsLoading ? (
-                    <Spinner />
+                    <div className="flex justify-center items-center mt-10 gap-3">
+                      <Spinner />
+                      <div className="text-gray-400">Loading Users</div>
+                    </div>
                   ) : users.length === 0 ? (
                     <div className="p-4 text-gray-500">No users found.</div>
                   ) : (
