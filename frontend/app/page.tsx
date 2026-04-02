@@ -228,284 +228,290 @@ export default function ChatPage() {
 
   return (
     <>
-      {/* Mobile Chat List */}
-      <div className="md:hidden p-3 border-b flex items-center gap-2">
-        <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-          <SheetTrigger asChild>
-            <button>
-              <Menu />
-            </button>
-          </SheetTrigger>
+      <div className="h-screen flex flex-col">
+        {/* Mobile Chat List start */}
+        <div className="md:hidden px-3 border-b flex items-center gap-2">
+          <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+            <SheetTrigger asChild>
+              <button>
+                <Menu />
+              </button>
+            </SheetTrigger>
 
-          <SheetContent side="left" className="p-0 w-72">
-            <SheetHeader>
-              <SheetTitle>Chat List</SheetTitle>
-              <SheetDescription>
-                Select a user to start chatting.
-              </SheetDescription>
-            </SheetHeader>
-            <div className="flex flex-col justify-between h-full">
-              {/* All Chats */}
-              <div>
-                {isLoading ? (
-                  <div className="p-4 text-gray-500">Loading users...</div>
-                ) : users.length === 0 ? (
-                  <div className="p-4 text-gray-500">No users found.</div>
-                ) : (
-                  users.map((user, i) => (
-                    <div
-                      key={user._id.toString()}
-                      onClick={() => handleUserSelect(user)}
-                      className={`p-2 px-3 cursor-pointer border-b border-gray-200 hover:bg-gray-100 ${
-                        selectedUser &&
-                        selectedUser._id.toString() === user._id.toString()
-                          ? "bg-(--chat-bg)"
-                          : ""
-                      }`}
-                    >
-                      <div className="flex gap-2">
-                        <div className="relative">
-                          {/* online symbol */}
-                          {onlineUsers.includes(user?.email) && (
-                            <div className="w-3 h-3 bg-green-500 rounded-full absolute bottom-1 right-0 border-green-300 border-2"></div>
-                          )}
-                          <Image
-                            src={user.image || "/placeholder.jpg"}
-                            alt={selectedUser?.name || "User avatar"}
-                            width={1080}
-                            height={1080}
-                            className=" w-10 h-auto rounded-full object-cover"
-                          />
-                        </div>
-                        <div>
-                          <div className="font-semibold">{user.name}</div>
-                          <p className="text-sm text-gray-500 truncate">
-                            {lastMsgs && lastMsgs[i]}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-              {/* User Info */}
-              <div className="flex border-t border-gray-400 flex items-center justify-between p-2">
-                <div className="flex">
-                  <Image
-                    src={session?.user?.image || "/placeholder.jpg"}
-                    alt={selectedUser?.name || "User avatar"}
-                    width={500}
-                    height={500}
-                    className="w-[30px] h-fit rounded-lg"
-                  />
-
-                  <div className="p-2 font-semibold text-gray-800 text-[12px] truncate">
-                    {session?.user?.email}
-                  </div>
-                </div>
-
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button variant={"destructive"}>Logout</Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>
-                        Are you sure to Logout?
-                      </AlertDialogTitle>
-                      <AlertDialogDescription>
-                        You can login again with the same Google Account
-                        whenever you want.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction onClick={() => signOut()}>
-                        Continue
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </div>
-            </div>
-          </SheetContent>
-        </Sheet>
-
-        <h1 className="p-4 font-bold text-xl border-gray-400 text-blue-600">
-          Chat App
-        </h1>
-      </div>
-
-      <div className="h-screen flex  bg-gray-100">
-        <div className="hidden md:flex w-[40%]  max-w-[450px] min-w-[250px] bg-white border-r border-gray-400 flex flex-col justify-between">
-          {/* Header and all chats */}
-          <div>
-            <div className="p-4 font-bold text-xl border-gray-400 text-blue-600">
-              Chat App
-            </div>
-
-            {/* All Chats */}
-            {isLoading ? (
-              <div className="p-4 text-gray-500">Loading users...</div>
-            ) : users.length === 0 ? (
-              <div className="p-4 text-gray-500">No users found.</div>
-            ) : (
-              users.map((user, i) => (
-                <div
-                  key={user._id.toString()}
-                  onClick={() => handleUserSelect(user)}
-                  className={`p-2 px-3 cursor-pointer border-b border-gray-200 hover:bg-gray-100 ${
-                    selectedUser &&
-                    selectedUser._id.toString() === user._id.toString()
-                      ? "bg-(--chat-bg)"
-                      : ""
-                  }`}
-                >
-                  <div className="flex gap-2">
-                    <div className="relative">
-                      {/* online symbol */}
-                      {onlineUsers.includes(user?.email) && (
-                        <div className="w-3 h-3 bg-green-500 rounded-full absolute bottom-1 right-0 border-green-300 border-2"></div>
-                      )}
-                      <Image
-                        src={user.image || "/placeholder.jpg"}
-                        alt={selectedUser?.name || "User avatar"}
-                        width={1080}
-                        height={1080}
-                        className=" w-10 h-auto rounded-full object-cover"
-                      />
-                    </div>
-                    <div>
-                      <div className="font-semibold">{user.name}</div>
-                      <p className="text-sm text-gray-500 truncate">
-                        {lastMsgs && lastMsgs[i]}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-
-          {/* User Info */}
-          <div className="flex border-t border-gray-400 flex items-center justify-between p-2">
-            <div className="flex">
-              <Image
-                src={session?.user?.image || "/placeholder.jpg"}
-                alt={selectedUser?.name || "User avatar"}
-                width={500}
-                height={500}
-                className="w-[30px] h-fit rounded-lg"
-              />
-
-              <div className="p-2 font-semibold text-gray-800 text-[12px] truncate">
-                {session?.user?.email}
-              </div>
-            </div>
-
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant={"destructive"}>Logout</Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Are you sure to Logout?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    You can login again with the same Google Account whenever
-                    you want.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={() => signOut()}>
-                    Continue
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </div>
-        </div>
-
-        {/*  Chat Area */}
-        <div className="w-full flex flex-col  bg-gradient-to-br from-indigo-400 to-purple-400  ">
-          {/* Header */}
-          {selectedUser && (
-            <div className=" px-4 py-2.5 flex items-center gap-2 bg-white border-b border-gray-300 font-semibold">
-              {/* Thumbnail */}
-              <div className="">
-                <Image
-                  src={selectedUser?.image || "/placeholder.jpg"}
-                  alt={selectedUser?.name || "User avatar"}
-                  width={40}
-                  height={40}
-                  className="h-full w-auto rounded-full"
-                />
-              </div>
-              {/* Name and last seen */}
-              <div>
-                <div>{selectedUser && selectedUser.name}</div>
-                <div className="text-sm text-gray-700">
-                  {onlineUsers.includes(selectedUser.email)
-                    ? "Online"
-                    : "Offline"}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Messages */}
-          <div className="flex-1 px-3 overflow-y-auto space-y-1 ">
-            {messages.length === 0 ? (
-              <div className="h-[90vh] text-gray-700 flex justify-center items-center text-center">
-                No messages yet. <br /> Click a user to start the conversation!
-              </div>
-            ) : (
-              <div className="flex flex-col">
-                {/* Conversations */}
+            <SheetContent side="left" className="p-0 w-72">
+              <SheetHeader>
+                <SheetTitle>Chat List</SheetTitle>
+                <SheetDescription>
+                  Select a user to start chatting.
+                </SheetDescription>
+              </SheetHeader>
+              <div className="flex flex-col justify-between h-full">
+                {/* All Chats */}
                 <div>
-                  {messages.map((msg, index) => (
-                    <div
-                      key={index}
-                      className={`max-w-[70%] w-fit px-3 my-1 rounded-lg flex gap-3 justify-between ${
-                        msg.sender === session?.user?.email
-                          ? "ml-auto bg-[#3f0497] text-white"
-                          : "bg-white"
-                      }`}
-                    >
-                      <div className="py-1">{msg.message}</div>
+                  {isLoading ? (
+                    <div className="p-4 text-gray-500">Loading users...</div>
+                  ) : users.length === 0 ? (
+                    <div className="p-4 text-gray-500">No users found.</div>
+                  ) : (
+                    users.map((user, i) => (
                       <div
-                        className={` text-xs shrink-0 text-right flex items-end pb-1
-                   mt-1 ${msg.sender === session?.user?.email ? "text-blue-200" : "text-gray-500"}`}
+                        key={user._id.toString()}
+                        onClick={() => handleUserSelect(user)}
+                        className={`p-2 px-3 cursor-pointer border-b border-gray-200 hover:bg-gray-100 ${
+                          selectedUser &&
+                          selectedUser._id.toString() === user._id.toString()
+                            ? "bg-(--chat-bg)"
+                            : ""
+                        }`}
                       >
-                        {formatTime(msg.createdAt)}
+                        <div className="flex gap-2">
+                          <div className="relative">
+                            {/* online symbol */}
+                            {onlineUsers.includes(user?.email) && (
+                              <div className="w-3 h-3 bg-green-500 rounded-full absolute bottom-1 right-0 border-green-300 border-2"></div>
+                            )}
+                            <Image
+                              src={user.image || "/placeholder.jpg"}
+                              alt={selectedUser?.name || "User avatar"}
+                              width={1080}
+                              height={1080}
+                              className=" w-10 h-auto rounded-full object-cover"
+                            />
+                          </div>
+                          <div>
+                            <div className="font-semibold">{user.name}</div>
+                            <p className="text-sm text-gray-500 truncate">
+                              {lastMsgs && lastMsgs[i]}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+                {/* User Info */}
+                <div className="flex border-t border-gray-400 flex items-center justify-between p-2">
+                  <div className="flex">
+                    <Image
+                      src={session?.user?.image || "/placeholder.jpg"}
+                      alt={selectedUser?.name || "User avatar"}
+                      width={500}
+                      height={500}
+                      className="w-[30px] h-fit rounded-lg"
+                    />
+
+                    <div className="p-2 font-semibold text-gray-800 text-[12px] truncate">
+                      {session?.user?.email}
+                    </div>
+                  </div>
+
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant={"destructive"}>Logout</Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Are you sure to Logout?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          You can login again with the same Google Account
+                          whenever you want.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => signOut()}>
+                          Continue
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
+              </div>
+            </SheetContent>
+          </Sheet>
+
+          <h1 className="p-4 font-bold text-xl border-gray-400 text-blue-600">
+            Chat App
+          </h1>
+        </div>
+        {/* Mobile Chat List end */}
+
+        <div className="flex flex-1 bg-gray-100 overflow-hidden">
+          {/* Desktop Chat List (Sidebar) start */}
+          <div className="hidden md:flex w-[40%] max-w-[450px] min-w-[250px] bg-white border-r border-gray-400 flex-col justify-between">
+            {/* Header and all chats */}
+            <div>
+              <div className="p-4 font-bold text-xl border-gray-400 text-blue-600">
+                Chat App
+              </div>
+
+              {/* All Chats */}
+              {isLoading ? (
+                <div className="p-4 text-gray-500">Loading users...</div>
+              ) : users.length === 0 ? (
+                <div className="p-4 text-gray-500">No users found.</div>
+              ) : (
+                users.map((user, i) => (
+                  <div
+                    key={user._id.toString()}
+                    onClick={() => handleUserSelect(user)}
+                    className={`p-2 px-3 cursor-pointer border-b border-gray-200 hover:bg-gray-100 ${
+                      selectedUser &&
+                      selectedUser._id.toString() === user._id.toString()
+                        ? "bg-(--chat-bg)"
+                        : ""
+                    }`}
+                  >
+                    <div className="flex gap-2">
+                      <div className="relative">
+                        {/* online symbol */}
+                        {onlineUsers.includes(user?.email) && (
+                          <div className="w-3 h-3 bg-green-500 rounded-full absolute bottom-1 right-0 border-green-300 border-2"></div>
+                        )}
+                        <Image
+                          src={user.image || "/placeholder.jpg"}
+                          alt={selectedUser?.name || "User avatar"}
+                          width={1080}
+                          height={1080}
+                          className=" w-10 h-auto rounded-full object-cover"
+                        />
+                      </div>
+                      <div>
+                        <div className="font-semibold">{user.name}</div>
+                        <p className="text-sm text-gray-500 truncate">
+                          {lastMsgs && lastMsgs[i]}
+                        </p>
                       </div>
                     </div>
-                  ))}
+                  </div>
+                ))
+              )}
+            </div>
+
+            {/* User Info */}
+            <div className="flex border-t border-gray-400 flex items-center justify-between p-2">
+              <div className="flex">
+                <Image
+                  src={session?.user?.image || "/placeholder.jpg"}
+                  alt={selectedUser?.name || "User avatar"}
+                  width={500}
+                  height={500}
+                  className="w-[30px] h-fit rounded-lg"
+                />
+
+                <div className="p-2 font-semibold text-gray-800 text-[12px] truncate">
+                  {session?.user?.email}
+                </div>
+              </div>
+
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant={"destructive"}>Logout</Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you sure to Logout?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      You can login again with the same Google Account whenever
+                      you want.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={() => signOut()}>
+                      Continue
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+          </div>
+          {/* Desktop Chat List (Sidebar) end */}
+
+          {/*  Chat Area */}
+          <div className="flex flex-col flex-1 min-w-0 bg-gradient-to-br from-indigo-400 to-purple-400">
+            {/* Header */}
+            {selectedUser && (
+              <div className=" px-4 py-2.5 flex items-center gap-2 bg-white border-b border-gray-300 font-semibold">
+                {/* Thumbnail */}
+                <div className="">
+                  <Image
+                    src={selectedUser?.image || "/placeholder.jpg"}
+                    alt={selectedUser?.name || "User avatar"}
+                    width={40}
+                    height={40}
+                    className="h-full w-auto rounded-full"
+                  />
+                </div>
+                {/* Name and last seen */}
+                <div>
+                  <div>{selectedUser && selectedUser.name}</div>
+                  <div className="text-sm text-gray-700">
+                    {onlineUsers.includes(selectedUser.email)
+                      ? "Online"
+                      : "Offline"}
+                  </div>
                 </div>
               </div>
             )}
-            <div ref={bottomRef}></div>
-          </div>
 
-          {/* Input */}
-          {selectedUser && (
-            <div className="bg-white rounded-full mx-3 mb-3 flex gap-2">
-              <input
-                value={input}
-                onKeyDown={(e) => handleKeyDown(e)}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Type a message..."
-                className="flex-1 py-3 rounded-lg px-5 py-2 outline-none"
-              />
-
-              <div
-                onClick={() => sendMessage(input)}
-                className={`${input.trim() == "" ? "bg-[#e3d1ff]" : "bg-[#6905ff]"} text-white p-3 m-1 rounded-full`}
-              >
-                <BiSend size={22} />
-              </div>
+            {/* Messages */}
+            <div className="flex-1 overflow-y-auto  p-4">
+              {messages.length === 0 ? (
+                <div className="h-[90vh] text-gray-700 flex justify-center items-center text-center">
+                  No messages yet. <br /> Click a user to start the
+                  conversation!
+                </div>
+              ) : (
+                <div className="flex flex-col">
+                  {/* Conversations */}
+                  <div>
+                    {messages.map((msg, index) => (
+                      <div
+                        key={index}
+                        className={`max-w-[70%] w-fit px-3 my-1 rounded-lg flex gap-3 justify-between ${
+                          msg.sender === session?.user?.email
+                            ? "ml-auto bg-[#3f0497] text-white"
+                            : "bg-white"
+                        }`}
+                      >
+                        <div className="py-1">{msg.message}</div>
+                        <div
+                          className={` text-xs shrink-0 text-right flex items-end pb-1
+                   mt-1 ${msg.sender === session?.user?.email ? "text-blue-200" : "text-gray-500"}`}
+                        >
+                          {formatTime(msg.createdAt)}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <div ref={bottomRef}></div>
             </div>
-          )}
+
+            {/* Input */}
+            {selectedUser && (
+              <div className="bg-white rounded-full mx-3 mb-3 flex gap-2">
+                <input
+                  value={input}
+                  onKeyDown={(e) => handleKeyDown(e)}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="Type a message..."
+                  className="flex-1 py-3 rounded-lg px-5 py-2 outline-none"
+                />
+
+                <div
+                  onClick={() => sendMessage(input)}
+                  className={`${input.trim() == "" ? "bg-[#e3d1ff]" : "bg-[#6905ff]"} text-white p-3 m-1 rounded-full`}
+                >
+                  <BiSend size={22} />
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </>
