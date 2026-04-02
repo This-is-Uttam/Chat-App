@@ -159,8 +159,6 @@ export default function ChatPage() {
       // Redirect to login if not authenticated
       redirect("/login");
     }
-
-    getOtherUsers();
   }, []);
 
   // register user to socket server
@@ -204,7 +202,10 @@ export default function ChatPage() {
   // For online signal
   useEffect(() => {
     if (!session?.user?.email) return;
-    console.log("session changed");
+    
+    // getting other users
+    getOtherUsers();
+    
     // user online broadcast
     socket.emit("user_online", session?.user?.email);
 
