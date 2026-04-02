@@ -8,6 +8,18 @@ export const runtime = "nodejs";
 export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt" as const,
+    
+  },
+
+  cookies: {
+    sessionToken: {
+      name: "__Secure-next-auth.session-token",
+      options: {
+        httpOnly: true,
+        sameSite: "none",  
+        secure: true       
+      }
+    }
   },
 
   providers: [
