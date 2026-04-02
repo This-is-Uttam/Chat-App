@@ -52,6 +52,8 @@ export default function ChatPage() {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   const { data: session, status } = useSession();
+  console.log("SESSION:", session);
+  console.log("STATUS:", status);
 
   const sendMessage = (message: string) => {
     if (!input.trim() || !selectedUser) return;
