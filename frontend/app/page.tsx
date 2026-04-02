@@ -74,6 +74,7 @@ export default function ChatPage() {
 
   const getOtherUsers = async () => {
     setisLoading(true);
+    console.log("session email: ", session?.user?.email);
     try {
       const response = await fetch("/api/user/all-users", {
         method: "POST",
@@ -204,7 +205,7 @@ export default function ChatPage() {
     if (!session?.user?.email) return;
     
     // getting other users
-    getOtherUsers();
+     getOtherUsers();
     
     // user online broadcast
     socket.emit("user_online", session?.user?.email);
