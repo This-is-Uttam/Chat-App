@@ -9,6 +9,7 @@ import socket from "@/lib/socket";
 import { formatDate, formatTime } from "@/utils/helper";
 import { BiSend } from "react-icons/bi";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -44,7 +45,8 @@ export default function ChatPage() {
   const [input, setInput] = useState("");
   const [users, setUsers] = useState<TUser[]>([]);
   const [selectedUser, setSelectedUser] = useState<TUser>();
-  const [isLoading, setisLoading] = useState(true);
+  const [isChatsLoading, setisChatsLoading] = useState(true);
+  const [isMsgsLoading, setisMsgsLoading] = useState(true);
   const [currentRoomId, setCurrentRoomId] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const [lastMsgs, setLastMsgs] = useState<string[]>([]);
@@ -75,7 +77,7 @@ export default function ChatPage() {
   };
 
   const getOtherUsers = async () => {
-    setisLoading(true);
+    setisChatsLoading(true);
     console.log("session email: ", session?.user?.email);
     try {
       const response = await fetch("/api/user/all-users", {
@@ -102,7 +104,7 @@ export default function ChatPage() {
     } catch (error) {
       console.error("Error fetching users:", error);
     } finally {
-      setisLoading(false);
+      setisChatsLoading(false);
     }
   };
 
@@ -131,7 +133,7 @@ export default function ChatPage() {
 
   const getMessagesOfChat = async (roomId: string) => {
     try {
-      setisLoading(true);
+      setisMsgsLoading(true);
       const response = await fetch(`/api/chat/${roomId}`, {
         method: "GET",
         credentials: "include",
@@ -149,7 +151,7 @@ export default function ChatPage() {
     } catch (error) {
       console.error("Error fetching chat messages:", error);
     } finally {
-      setisLoading(false);
+      setisMsgsLoading(false);
     }
   };
 
@@ -158,7 +160,7 @@ export default function ChatPage() {
   }, [messages]);
 
   useEffect(() => {
-     if (status === "loading") return;
+    if (status === "loading") return;
 
     if (!session) {
       // Redirect to login if not authenticated
@@ -207,10 +209,10 @@ export default function ChatPage() {
   // For online signal
   useEffect(() => {
     if (!session?.user?.email) return;
-    
+
     // getting other users
-     getOtherUsers();
-    
+    getOtherUsers();
+
     // user online broadcast
     socket.emit("user_online", session?.user?.email);
 
@@ -254,8 +256,8 @@ export default function ChatPage() {
               <div className="flex flex-col justify-between h-full">
                 {/* All Chats */}
                 <div>
-                  {isLoading ? (
-                    <div className="p-4 text-gray-500">Loading users...</div>
+                  {isChatsLoading ? (
+                    <Spinner />
                   ) : users.length === 0 ? (
                     <div className="p-4 text-gray-500">No users found.</div>
                   ) : (
@@ -354,8 +356,11 @@ export default function ChatPage() {
               </div>
 
               {/* All Chats */}
-              {isLoading ? (
-                <div className="p-4 text-gray-500">Loading users...</div>
+              {isChatsLoading ? (
+                <div className="flex justify-center items-center mt-10 gap-3">
+                  <Spinner />
+                  <div className="text-gray-400">Loading Users</div>
+                </div>
               ) : users.length === 0 ? (
                 <div className="p-4 text-gray-500">No users found.</div>
               ) : (
@@ -466,7 +471,7 @@ export default function ChatPage() {
             {/* Messages */}
             <div className="flex-1 overflow-y-auto  p-4">
               {messages.length === 0 ? (
-                <div className="h-[90vh] text-gray-700 flex justify-center items-center text-center">
+                <div className="h-[90vh] text-gray-800 flex justify-center items-center text-center">
                   No messages yet. <br /> Click a user to start the
                   conversation!
                 </div>
@@ -474,24 +479,31 @@ export default function ChatPage() {
                 <div className="flex flex-col">
                   {/* Conversations */}
                   <div>
-                    {messages.map((msg, index) => (
-                      <div
-                        key={index}
-                        className={`max-w-[70%] w-fit px-3 my-1 rounded-lg flex gap-3 justify-between ${
-                          msg.sender === session?.user?.email
-                            ? "ml-auto bg-[#3f0497] text-white"
-                            : "bg-white"
-                        }`}
-                      >
-                        <div className="py-1">{msg.message}</div>
-                        <div
-                          className={` text-xs shrink-0 text-right flex items-end pb-1
-                   mt-1 ${msg.sender === session?.user?.email ? "text-blue-200" : "text-gray-500"}`}
-                        >
-                          {formatTime(msg.createdAt)}
-                        </div>
+                    {isMsgsLoading ? (
+                      <div className="flex justify-center items-center mt-10 gap-3">
+                        <Spinner />
+                        <div className="text-gray-800">Loading Conversations</div>
                       </div>
-                    ))}
+                    ) : (
+                      messages.map((msg, index) => (
+                        <div
+                          key={index}
+                          className={`max-w-[70%] w-fit px-3 my-1 rounded-lg flex gap-3 justify-between ${
+                            msg.sender === session?.user?.email
+                              ? "ml-auto bg-[#3f0497] text-white"
+                              : "bg-white"
+                          }`}
+                        >
+                          <div className="py-1">{msg.message}</div>
+                          <div
+                            className={` text-xs shrink-0 text-right flex items-end pb-1
+                   mt-1 ${msg.sender === session?.user?.email ? "text-blue-200" : "text-gray-500"}`}
+                          >
+                            {formatTime(msg.createdAt)}
+                          </div>
+                        </div>
+                      ))
+                    )}
                   </div>
                 </div>
               )}
