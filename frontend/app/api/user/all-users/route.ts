@@ -18,11 +18,10 @@ export type ChatType = {
 
 export async function POST(req: NextRequest) {
   try {
-    const session = getServerSession()
     const {currentUserEmail: currentUser} = await req.json()
     
 
-    if (!session) {
+    if (!currentUser) {
       return NextResponse.json(
         { success: false, message: "Unauthorized" },
         { status: 401 },
